@@ -1,0 +1,23 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Collaborastory{% block titlesuffix %}{% endblock %}</title>
+
+        <link href='http://fonts.googleapis.com/css?family=Calligraffitti' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet"  href="{% static "main.css" %}"></link>
+
+        <script src='{% static "main.js" %}'></script>
+    </head>
+    <body>
+        <div id="header-wrap">
+            {% include "header.html" %}
+        </div>
+        <div id="content-wrap">
+            <div id="content">
+                {{ content }}
+            </div>
+        </div>
+    </body>
+
+</html>
