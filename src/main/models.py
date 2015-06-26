@@ -12,14 +12,17 @@ class Story(models.Model):
         return self.text
 
 
-class Authors(models.Model):
+class Author(models.Model):
+
+
     user = models.ForeignKey(User)
     story = models.ForeignKey(Story)
     order = models.IntegerField(default=0)
-    uuid = models.CharField(max_length=64,default=uuid1)
+    uuid = models.CharField(max_length=64,default='' )
 
     def __str__(self):
         return self.user.__str__()
+
 
 class Word(models.Model):
     text = models.CharField(max_length=200)
