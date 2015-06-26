@@ -2,7 +2,7 @@
 <div id="header">
 
     <div id="logo"><img src="{% static "logo.png" %}" alt="Collaborastory"></div>
-    <div id="read" class="link active">Read</div>
-    <div id="write" class="link">Write</div>
+    <a href="/story/read" id="read" class="link {% if read %}active{% endif %}">Read</a>
+    <a href="/story/write" id="write" class="link {% if not read %}active{% endif %}">Write</a>
 
 </div>

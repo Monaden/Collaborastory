@@ -1,0 +1,33 @@
+{% extends "index.html" %}
+
+{% block content %}
+        {{ id }}
+        {% if id != 0 %}
+
+<div>
+    <div id="story">
+        <span class="word user-1">Lorem</span>
+        <span class="word user-2">ipsum</span>
+        <span class="word user-3">tempus</span>
+        <span class="word user-1">dolor</span>
+    </div>
+    <div id="userlist">
+        <div class="user">User 1</div>
+        <div class="user">User 2</div>
+        <div class="user">User 3</div>
+    </div>
+    <div id="input-wrap">
+        <div id="input">
+            <input type="text" name="" id="word"/>
+            <input type="button" value="Send"/>
+        </div>
+         &mdash; or &mdash; <div id="vote-end"><input type="button" value="vote-end"/></div>
+    </div>
+</div>
+        {% else %}
+        <div>
+            <a href="/story/write/new">New</a>
+            <a href="/story/write/join">Join</a>
+        </div>
+        {% endif %}
+{% endblock %}

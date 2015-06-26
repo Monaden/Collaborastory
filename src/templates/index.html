@@ -11,11 +11,11 @@
     </head>
     <body>
         <div id="header-wrap">
-            {% include "header.html" %}
+            {% include "header.html" with read=isRead %}
         </div>
         <div id="content-wrap">
             <div id="content">
-                {{ content }}
+                {% block content %}{% endblock %}
             </div>
         </div>
     </body>
