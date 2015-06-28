@@ -3,6 +3,9 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.template import RequestContext, loader
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.debug import sensitive_post_parameters
+from django.contrib.auth.decorators import login_required
 
 from .models import Story, Author, Word
 
@@ -38,6 +41,8 @@ def write(request, story_id = ""):
     })
     return HttpResponse(template.render(context))
 
+
+@login_required()
 def new(request):
 
     story = Story(
@@ -63,11 +68,13 @@ def new(request):
 
     return redirect(url)
 
+@login_required()
 def join(request):
     id = 0
     url = '/story/write/'+str(id)
     return redirect(url)
 
+@login_required()
 def addWord(request):
     word = Word(
         text = '',
@@ -77,3 +84,9 @@ def addWord(request):
     )
 
     word.save()
+
+
+@sensitive_post_parameters()
+@csrf_protect
+def register(request):
+    return render(request, template_name='')

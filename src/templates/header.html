@@ -2,7 +2,14 @@
 <div id="header">
 
     <div id="logo"><img src="{% static "logo.png" %}" alt="Collaborastory"></div>
-    <a href="/story/read" id="read" class="link {% if read %}active{% endif %}">Read</a>
-    <a href="/story/write" id="write" class="link {% if not read %}active{% endif %}">Write</a>
-
+    <a href="{% url 'story_read' %}" id="read" class="link {% if read %}active{% endif %}">Read</a>
+    <a href="{% url 'story_write' %}" id="write" class="link {% if not read %}active{% endif %}">Write</a>
+    <div id="user-box">
+        {% if user.is_authenticated %}
+            <p>Logged in as: {{ user.username }}.</p>
+            <a href="{% url 'logout' %}">Log out</a>
+        {% else %}
+            <a href="{% url 'login' %}">Log in</a>
+        {% endif %}
+    </div>
 </div>

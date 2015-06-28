@@ -18,10 +18,14 @@ from django.contrib import admin
 from main import views, urls
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.generic.base import RedirectView
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^$',views.index),
+    url(r'^$',views.index, name='index'),
     url(r'^story/', include(urls)),
-    url(r'^user/', include('django.contrib.auth.urls')),
+    url(r'^accounts/', include('django.contrib.auth.urls')),
+    url(r'^accounts/register', views.register,name='user_register'),
+    url(r'^accounts/profile', RedirectView.as_view(url='/story/write', permanent=True),name='user_register'),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
