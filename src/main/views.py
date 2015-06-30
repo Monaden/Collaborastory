@@ -29,17 +29,21 @@ def write(request, story_id = ""):
 
     try:
         story = Story.objects.get(pk=sid)
+        authors = Author.objects.filter(story=story.id)
+        words = Word.objects.filter(story=story.id)
+        context = RequestContext(request, {
+            'isRead': False,
+            'id': sid,
+            'authors': authors,
+            'words': words,
+            'uuid': request.session.get('author_id','')
+        })
+        return HttpResponse(template.render(context))
+
     except Story.DoesNotExist:
         sid = 0
         story = {}
-
-    context = RequestContext(request, {
-        'isRead': False,
-        'id': sid,
-        'story': story,
-        'uuid': request.session.get('author_id','')
-    })
-    return HttpResponse(template.render(context))
+        text = ""
 
 
 @login_required()
@@ -54,7 +58,7 @@ def new(request):
     story.save()
 
     author = Author(
-        user = User.objects.get(pk=1),
+        user = request.user,
         story = story,
         order = 0,
         uuid = uuid1().__str__()
@@ -75,15 +79,41 @@ def join(request):
     return redirect(url)
 
 @login_required()
-def addWord(request):
-    word = Word(
-        text = '',
-        author = Author.objects.get(
-            uuid = request.session.get('author_id','')
-        ),
-    )
+def add(request):
+    if request.method == 'POST':
+        story_id = int(request.POST["story_id"])
+        if story_id > 0:
+            authors = Author.objects.filter(story=story_id)
+            words = Word.objects.filter(story=story_id)
+            try:
+                user = Author.objects.get(story_id=story_id, user=request.user.id)
+            except Author.DoesNotExist:
+                return HttpResponse("{error:true,msg:\"You don't have access to that.\"",content_type='application/json')
+            if len(authors) > 0 and user.order == len(words)%len(authors):
 
-    word.save()
+                text = request.POST["text"]
+                word = Word(
+                    text = text,
+                    story_id = story_id,
+                    author = request.user,
+                )
+
+                word.save()
+                return HttpResponse("{error:false}",content_type='application/json')
+
+    return HttpResponse("{error:true,msg:\"You don't have access to that.\"}",content_type='application/json')
+
+
+def get(request,story_id='0'):
+    id = int(story_id)
+    if id > 0:
+        story = Story.objects.get(pk=id)
+        authors = Author.objects.filter(story=story.id)
+        words = Word.objects.filter(story=story.id)
+        return render(request,template_name='get.html',context={
+            "words": words,
+            "authors": authors
+        },content_type='application/json')
 
 
 @sensitive_post_parameters()

@@ -1,33 +1,97 @@
 {% extends "index.html" %}
 
 {% block content %}
-        {{ id }}
-        {% if id != 0 %}
 
+{% if id != 0 %}
 <div>
     <div id="story">
-        <span class="word user-1">Lorem</span>
-        <span class="word user-2">ipsum</span>
-        <span class="word user-3">tempus</span>
-        <span class="word user-1">dolor</span>
+        {% for word in words %}
+        <span class="word author-{{ word.author.id }}">{{ word.text }}</span>
+        {% endfor %}
     </div>
     <div id="userlist">
-        <div class="user">User 1</div>
-        <div class="user">User 2</div>
-        <div class="user">User 3</div>
+        {% for author in authors %}
+        <div class="user" data-id="{{ author.id }}">{{ author }}</div>
+        {% endfor %}
     </div>
     <div id="input-wrap">
         <div id="input">
             <input type="text" name="" id="word"/>
-            <input type="button" value="Send"/>
+            <input type="button" value="Send" id="add-word"/>
         </div>
          &mdash; or &mdash; <div id="vote-end"><input type="button" value="vote-end"/></div>
     </div>
 </div>
-        {% else %}
-        <div>
-            <a href="/story/write/new">New</a>
-            <a href="/story/write/join">Join</a>
-        </div>
-        {% endif %}
+        <script>
+            $("#add-word").on('click',function (e) {
+                text = $('#word').val();
+                if (text !== "") {
+                    $.post("{% url 'story_add' %}",{
+                        text: text,
+                        story_id: {{ id }},
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                    });
+                }
+            });
+
+            window.wordCount = {{ words|length }};
+            window.authorCount = {{ authors|length }};
+
+            function update() {
+                $.ajax({
+                    url: "{% url 'story_get' id %}",
+                    dataType: 'json',
+                    method: 'GET',
+                })
+                .complete(function (jqxhr) { })
+                .success(function () { })
+                .done(function (data,status,jqxhr) {
+                    if (window.wordCount != data.words.length) {
+                        words = $('#story');
+                        words.html("");
+                        for (var i = 0; i < data.words.length;i++) {
+                            word = $('<span></span>');
+                            word.addClass('word')
+                                .addClass('author-'+data.words[i].author)
+                                .text(data.words[i].text+" ");
+                            words.append(word);
+                        }
+                    }
+                    if (window.authorCount != data.authors.length) {
+                        authors = $('#userlist');
+                        authors.html("");
+                        for (var i = 0; i < data.authors.length;i++) {
+                            author = $('<div></div>');
+                            author.addClass('user')
+                                .data('id',data.authors[i].id)
+                                .text(data.authors[i].name);
+                            authors.append(author);
+                        }
+                    }
+
+
+                })
+                .fail(function (a) { console.log('fail'); });
+            }
+            setInterval(update,1000);
+
+            $('#userlist').on('mouseenter','.user',function (ev,b) {
+                var e = $(ev.target);
+                var id = e.data('id');
+                e.css('background-color','red');
+                $('#story .author-'+id).css('background-color','red');
+
+            }).on('mouseleave','.user',function (ev,b) {
+                var e = $(ev.target);
+                var id = e.data('id');
+                e.css('background-color','');
+                $('#story .author-'+id).css('background-color','');
+            });
+        </script>
+{% else %}
+<div>
+    <a href="/story/write/new">New</a>
+    <a href="/story/write/join">Join</a>
+</div>
+{% endif %}
 {% endblock %}

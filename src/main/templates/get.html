@@ -1,0 +1,18 @@
+{
+    "words": [
+        {% for word in words %}
+            {
+                "author": "{{ word.author.id }}",
+                "text": "{{ word.text }}"
+            }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ],
+    "authors": [
+        {% for author in authors %}
+            {
+                "name": "{{ author }}",
+                "id": {{ author.id }}
+            }{% if not forloop.last %},{% endif %}
+        {% endfor  %}
+    ]
+}

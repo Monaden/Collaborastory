@@ -27,6 +27,7 @@ class Author(models.Model):
 class Word(models.Model):
     text = models.CharField(max_length=200)
     author = models.ForeignKey(User,verbose_name=u"Author")
+    story = models.ForeignKey(Story,verbose_name=u"Story ")
     time = models.DateTimeField(verbose_name=u"Time",auto_now=True)
 
     def __str__(self):
